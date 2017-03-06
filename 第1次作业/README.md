@@ -2,8 +2,13 @@
 
 -------
 
-##1.mesos论文
+##1.mesos和数据中心操作系统
 [论文](https://github.com/bacTlink/OS-practice/blob/master/%E7%AC%AC1%E6%AC%A1%E4%BD%9C%E4%B8%9A/Mesos%20A%20Platform%20for%20Fine-Grained%20Resource%20Sharing%20in%20the%20Data%20Center.pdf)
+
+mesos是一个二级架构的框架，它只是资源的集合，并不管理哪个资源进行什么计算。
+当一个调度框架运行的时候，它向mesos请求资源，mesos返回它可用的资源，调度框架则进行具体的资源的使用。
+
+数据中心操作系统的作用：数据中心操作系统的管理员可以通过各种工具和技术的结合，在单个数据中心操作系统就能完成对多个服务器的管理工作，这样能让工作更有效率。这意味着用户无需关心数据的调度、资源的分配等，让用户在一个节点能够简单地用多个节点的所有资源。
 
 ---
 
