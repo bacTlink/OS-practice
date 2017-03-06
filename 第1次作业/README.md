@@ -1,7 +1,5 @@
 #第一次作业
 
-[TOC]
-
 -------
 
 ##1.mesos论文
@@ -49,8 +47,10 @@ $ make check
 # Install (Optional).
 $ make install
 ```
+
 下面是make check的结果：
 ![build mesos](https://github.com/bacTlink/OS-practice/raw/master/%E7%AC%AC1%E6%AC%A1%E4%BD%9C%E4%B8%9A/build%20mesos.png)
+
 运行一下examples：
 ```
 # Change into build directory.
