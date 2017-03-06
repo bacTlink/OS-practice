@@ -143,6 +143,11 @@ N=4
 
 结果文件：[result.txt](https://github.com/bacTlink/OS-practice/raw/master/%E7%AC%AC1%E6%AC%A1%E4%BD%9C%E4%B8%9A/result.txt)
 
+尝试使用多台电脑连接到一个master上，成功。
+附图：
+![tasks](https://github.com/bacTlink/OS-practice/raw/master/%E7%AC%AC1%E6%AC%A1%E4%BD%9C%E4%B8%9A/Tasks.png)
+![Union](https://github.com/bacTlink/OS-practice/raw/master/%E7%AC%AC1%E6%AC%A1%E4%BD%9C%E4%B8%9A/Union.png)
+
 ---
 
 ##5.遇到的问题
