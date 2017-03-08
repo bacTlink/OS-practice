@@ -147,6 +147,8 @@ N=4
 附图：
 ![tasks](https://github.com/bacTlink/OS-practice/raw/master/%E7%AC%AC1%E6%AC%A1%E4%BD%9C%E4%B8%9A/Tasks.png)
 ![Union](https://github.com/bacTlink/OS-practice/raw/master/%E7%AC%AC1%E6%AC%A1%E4%BD%9C%E4%B8%9A/Union.png)
+感谢[wtx](https://github.com/justshining/OpSysPrac)
+感谢[yzd](https://github.com/magicfisk/mesos_learning)
 
 ---
 
