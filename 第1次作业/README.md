@@ -1,8 +1,7 @@
-#第一次作业
-
+第一次作业
 -------
 
-##1.mesos和数据中心操作系统
+1.mesos和数据中心操作系统
 [论文](https://github.com/bacTlink/OS-practice/blob/master/%E7%AC%AC1%E6%AC%A1%E4%BD%9C%E4%B8%9A/Mesos%20A%20Platform%20for%20Fine-Grained%20Resource%20Sharing%20in%20the%20Data%20Center.pdf)
 
 mesos是一个二级架构的框架，它只是资源的集合，并不管理哪个资源进行什么计算。
@@ -12,7 +11,7 @@ mesos是一个二级架构的框架，它只是资源的集合，并不管理哪
 
 ---
 
-##2.虚拟机和容器技术
+2.虚拟机和容器技术
 
 虚拟机对硬件进行仿真，可在其上搭建一个有效的、独立的真实机器的副本，可以安装任何操作系统，可以和任何实际机器无关。
 用户在虚拟机上运行一个完整操作系统，在该系统上再运行所需应用进程。
@@ -26,7 +25,7 @@ mesos是一个二级架构的框架，它只是资源的集合，并不管理哪
 
 ---
 
-##3. mesos-1.1.0, build, 运行
+3. mesos-1.1.0, build, 运行
 
 下载mesos-1.1.0。
 我是直接用release版本。
@@ -84,7 +83,7 @@ $ ./src/examples/python/test-framework 127.0.0.1:5050
 
 ---
 
-##4.运行Spark on Mesos
+4.运行Spark on Mesos
 
 下载Spark-2.1.0。
 需要
@@ -121,7 +120,7 @@ export SPARK_EXECUTOR_URI=/usr/local/spark.tar.gz
 ```
 可以在mesos主页看到SparkPi成功运行。
 
-###运行wordcount.py
+运行wordcount.py
 使用文件：100份[aesop11.txt](http://www.textfiles.com/stories/aesop11.txt)的合体文件[aesop11x100.txt](https://github.com/bacTlink/OS-practice/raw/master/%E7%AC%AC1%E6%AC%A1%E4%BD%9C%E4%B8%9A/aesop11x100.txt)，大小22.34MB
 命令：
 
@@ -152,7 +151,7 @@ N=4
 
 ---
 
-##5.遇到的问题
+5.遇到的问题
 
 - [x] **mesos**
     - [x] **make** FAILED, out of memory
