@@ -84,7 +84,7 @@ mesos作为Spark的Cluster Manager，运行流程为：
 
 ### Master
 
-Master的入口是main.cpp
+Master的入口是mesos-1.1.0/src/master/main.cpp
 ```
 开一个master::Flags记录flags。
 flags用到了stout库，主要是其中的option和flag。
@@ -108,8 +108,38 @@ flags涉及到了LIBPROCESS_IP等环境变量。
 等待master结束。
 垃圾回收。
 ```
+这里创建master线程，应该是进入了Master::initialize()。
+然后就等待事件的发生，以进行相应。
+这里的事件包括Slave注册，Framework注册，Framework执行任务等等。
 
-向Master提供资源，每隔"disk_watch_interval"的时间就调用一次Slave::checkDiskUsage
+### Slave
+Slave的入口是mesos-1.1.0/src/slave/main.cpp
+
+```
+开一个slave::Flags进行flags的chuli。
+向Master提供资源，每隔"disk_watch_interval"的时间就调用一次Slave::checkDiskUsage。
+输出版本号。
+利用libprocess生成一个slave的ID。
+进行libprocess库的process的初始化。
+进行日志logging的初始化。
+将warning写入日志中。
+新建一个VersionProcess线程用于返回http请求的版本号。
+初始化防火墙。
+初始化模块。
+创建containerizer。
+创建detector。
+Authorizer管理。
+创建gc、StatusUpdateManager、ResourceEstimator。
+创建slave实例，创建slave线程。
+等待slave结束。
+垃圾回收。
+```
+
+创建slave线程后应该也是进入Slave::initialize()进行slave的初始化。
+
+Master和Slave的initialize过程基本都是对flag进行处理，进行http请求的初始化工作。
+
+
 4.查找资料，简述Mesos的资源调度算法，指出在源代码中的具体位置并阅读，说说你对它的看法
 ---
 
