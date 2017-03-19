@@ -55,7 +55,8 @@ executor运行在slave上，负责执行framework的tasks。
 
 - Master将Tasks发送给Slaves，然后Slaves运行Task，报告可用资源给Master。
 
-更详细的工作流程：[(参考资料)](http://www.cnblogs.com/popsuper1982/p/5930827.html)
+#### 更详细的工作流程：[(参考资料)](http://www.cnblogs.com/popsuper1982/p/5930827.html)
+
 ![pig](http://images2015.cnblogs.com/blog/635909/201610/635909-20161004174842567-1059543870.png)
 
 
@@ -64,8 +65,49 @@ executor运行在slave上，负责执行framework的tasks。
 
 ### 以Spark为例。
 
+![SparkWroks](http://spark.apache.org/docs/latest/img/cluster-overview.png)
+
+上图为Spark运行时的框架。
+mesos作为Spark的Cluster Manager，运行流程为：
+- Spark启动，作为Framework向Master注册
+- 用户向Driver Program提交Tasks
+- Mesos调度Worker Node(Slave)运行Tasks
+- Slave从Spark处获取SparkContext以运行Tasks
+
+### 与传统操作系统进行对比
+- 开始运行申请资源时，传统操作系统中，程序是申请资源，然后操作系统返回结果。而在Mesos上时，则是Mesos提供可用资源，程序再进行申请，Mesos再返回结果。
+- 运行时，都对程序提供了资源的抽象，包括CPU、内存、GPU等等。
+- 最大的不同是一个运行在单机，另一个运行在集群上。运行在传统操作系统上的程序不需要进行通信。
+
 3.叙述master和slave的初始化过程
 ---
+
+### Master
+
+Master的入口是main.cpp
+```
+开一个master::Flags记录flags。
+flags用到了stout库，主要是其中的option和flag。
+flags涉及到了LIBPROCESS_IP等环境变量。
+进行libprocess库的process的初始化。
+进行日志logging的初始化。
+将warning写入日志中。
+新建一个VersionProcess线程用于返回http请求的版本号。
+初始化防火墙。
+初始化模块。
+初始化hooks（暂时不知道有什么作用）。
+新建一个分配器的实例。
+新建用于state的空间。
+创建State实例。
+创建Registrar实例。
+创建MasterContender实例。
+创建MasterDetector实例。
+初始化Authorizer相关内容。
+初始化SlaveRemovalLimiter相关内容。
+创建master实例，创建master线程以监听请求。
+等待master结束。
+垃圾回收。
+```
 
 向Master提供资源，每隔"disk_watch_interval"的时间就调用一次Slave::checkDiskUsage
 4.查找资料，简述Mesos的资源调度算法，指出在源代码中的具体位置并阅读，说说你对它的看法
