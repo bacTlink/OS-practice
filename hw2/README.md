@@ -358,6 +358,6 @@ if __name__ == '__main__':
 ![资源](https://github.com/bacTlink/OS-practice/raw/master/hw2/test0.png)
 
 代码正确地显示了结果。
-![结果](https://github.com/bacTlink/OS-practice/raw/master/hw2/res.png)
+![结果](https://github.com/bacTlink/OS-practice/raw/master/hw2/test0_res.png)
 
 上面的代码并不是线程安全的，这里仅仅作为interface.py中提到的API的一个测试。
