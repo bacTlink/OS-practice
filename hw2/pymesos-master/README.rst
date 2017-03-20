@@ -1,3 +1,7 @@
+引用PyMesos项目。
+=======
+项目地址：https://github.com/douban/pymesos
+
 PyMesos
 ========
 
