@@ -142,6 +142,29 @@ Master和Slave的initialize过程基本都是对flag进行处理，进行http请
 
 4.查找资料，简述Mesos的资源调度算法，指出在源代码中的具体位置并阅读，说说你对它的看法
 ---
+Mesos使用的是Dominant Resource Fairness算法(DRF)：[论文](https://github.com/bacTlink/OS-practice/raw/master/hw2/Ghodsi.pdf)
+
+其目标是确保每一个用户，即Mesos中的Framework能够接收到其最需资源的公平份额。
+
+首先定义主导资源(domainant resource)和主导份额。
+主导资源为一个Framework的某个资源，Framework所需除以Master所有，大于其它所有资源。
+Framework所需除以Master所有，即为这个Framework的主导份额。
+
+DRF算法会解方程，尽量让每一个Framework的主导份额相等，除非某个Framework不需要那么多的资源。如果是带权重的DRF算法，只需将权重归一化再执行DRF算法即可。
+
+它的核心算法伪代码：
+![伪代码](https://github.com/bacTlink/OS-practice/raw/master/hw2/DRF.png
+
+它的代码应该是位于mesos-1.1.0/src/master/allocator/mesos/hierarchical.cpp中的HierarchicallAllocatorProcess::allocate()
+
+### 看法
+DRF算法在公平这一点上，有其合理之处，
+即让每个Framework最稀缺的资源占有相同的份额。
+
+翻看代码后发现DRF在mesos中的实现还考虑的很多很多的情况，
+包括Slave掉线、Framework掉线等等情况。
+实际工程比起理论上，
+需要补足很多细节。
 
 5.写一个完成简单工作的框架(语言自选，需要同时实现scheduler和executor)并在Mesos上运行，在报告中对源码进行说明并附上源码，本次作业分数50%在于本项的完成情况、创意与实用程度。（后面的参考资料一定要读，降低大量难度）
 ---
