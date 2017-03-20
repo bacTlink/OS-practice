@@ -168,3 +168,191 @@ DRF算法在公平这一点上，有其合理之处，
 
 5.写一个完成简单工作的框架(语言自选，需要同时实现scheduler和executor)并在Mesos上运行，在报告中对源码进行说明并附上源码，本次作业分数50%在于本项的完成情况、创意与实用程度。（后面的参考资料一定要读，降低大量难度）
 ---
+
+使用PyMesos项目来完成。
+
+### 对PyMesos进行一个功能上的测试：
+
+#### scheduler.py
+```
+#!/usr/bin/env python2.7
+from __future__ import print_function
+
+import sys
+import uuid
+import time
+import socket
+import signal
+import getpass
+from threading import Thread
+from os.path import abspath, join, dirname
+
+from pymesos import MesosSchedulerDriver, Scheduler, encode_data, decode_data
+from addict import Dict
+
+TASK_CPU = 1
+TASK_MEM = 32
+EXECUTOR_CPUS = 0.5
+EXECUTOR_MEM = 32
+
+
+class MyScheduler(Scheduler):
+
+    sum_res = 0
+    nums = 200000000
+    counts = 10
+    finished = 0
+    i = 0
+
+    def __init__(self, executor):
+        self.executor = executor
+
+    def frameworkMessage(self, driver, executorId, slaveId, message):
+        self.sum_res = self.sum_res + int(decode_data(message))
+        self.finished = self.finished + 1
+        if self.finished >= self.counts:
+            print(self.sum_res)
+            driver.stop()
+
+    def resourceOffers(self, driver, offers):
+        if self.i >= self.counts:
+            return None
+        filters = {'refuse_seconds': 5}
+
+        for offer in offers:
+            if self.i >= self.counts:
+                break
+            cpus = self.getResource(offer.resources, 'cpus')
+            mem = self.getResource(offer.resources, 'mem')
+            if cpus < TASK_CPU or mem < TASK_MEM:
+                continue
+
+            task = Dict()
+            task_id = str(uuid.uuid4())
+            task.task_id.value = task_id
+            task.agent_id.value = offer.agent_id.value
+            task.name = 'task {}'.format(task_id)
+            task.executor = self.executor
+            task.data = encode_data(str(self.i * self.nums) + ' ' + str((self.i + 1) * self.nums))
+
+            task.resources = [
+                dict(name='cpus', type='SCALAR', scalar={'value': TASK_CPU}),
+                dict(name='mem', type='SCALAR', scalar={'value': TASK_MEM}),
+            ]
+
+            driver.launchTasks(offer.id, [task], filters)
+            self.i = self.i + 1
+
+    def getResource(self, res, name):
+        for r in res:
+            if r.name == name:
+                return r.scalar.value
+        return 0.0
+
+    def statusUpdate(self, driver, update):
+        logging.debug('Status update TID %s %s',
+                      update.task_id.value,
+                      update.state)
+
+def main(master):
+    executor = Dict()
+    executor.executor_id.value = 'MyExecutor'
+    executor.name = executor.executor_id.value
+    executor.command.value = '%s %s' % (
+        sys.executable,
+        abspath(join(dirname(__file__), 'executor.py'))
+    )
+    executor.resources = [
+        dict(name='mem', type='SCALAR', scalar={'value': EXECUTOR_MEM}),
+        dict(name='cpus', type='SCALAR', scalar={'value': EXECUTOR_CPUS}),
+    ]
+
+    framework = Dict()
+    framework.user = getpass.getuser()
+    framework.name = "MyFramework"
+    framework.hostname = socket.gethostname()
+
+    driver = MesosSchedulerDriver(
+        MyScheduler(executor),
+        framework,
+        master,
+        use_addict=True,
+    )
+
+    def signal_handler(signal, frame):
+        driver.stop()
+
+    def run_driver_thread():
+        driver.run()
+
+    driver_thread = Thread(target=run_driver_thread, args=())
+    driver_thread.start()
+
+    print('Scheduler running, Ctrl+C to quit.')
+    signal.signal(signal.SIGINT, signal_handler)
+
+    while driver_thread.is_alive():
+        time.sleep(1)
+
+
+if __name__ == '__main__':
+    import logging
+    logging.basicConfig(level=logging.DEBUG)
+    if len(sys.argv) != 2:
+        print("Usage: {} <mesos_master>".format(sys.argv[0]))
+        sys.exit(1)
+    else:
+        main(sys.argv[1])
+```
+
+#### executor.py
+```
+#!/usr/bin/env python2.7
+from __future__ import print_function
+
+import sys
+import time
+from threading import Thread
+
+from pymesos import MesosExecutorDriver, Executor, decode_data, encode_data
+from addict import Dict
+
+
+class MyExecutor(Executor):
+    def launchTask(self, driver, task):
+        def run_task(task):
+            update = Dict()
+            update.task_id.value = task.task_id.value
+            update.state = 'TASK_RUNNING'
+            update.timestamp = time.time()
+            driver.sendStatusUpdate(update)
+
+            tmp = decode_data(task.data).split(' ')
+            left = int(tmp[0])
+            right = int(tmp[1])
+            res = 0
+            for i in xrange(left, right):
+                res = res + i
+            driver.sendFrameworkMessage(encode_data(str(res)))
+
+            update = Dict()
+            update.task_id.value = task.task_id.value
+            update.state = 'TASK_FINISHED'
+            update.timestamp = time.time()
+            driver.sendStatusUpdate(update)
+
+        thread = Thread(target=run_task, args=(task,))
+        thread.start()
+
+
+if __name__ == '__main__':
+    import logging
+    logging.basicConfig(level=logging.DEBUG)
+    driver = MesosExecutorDriver(MyExecutor(), use_addict=True)
+    driver.run()
+```
+
+其功能，是计算0到nums(=200000000) * counts(=10)的和。
+
+下图是计算到一半时，资源的使用状况：
+![资源](https://github.com/bacTlink/OS-practice/raw/master/hw2/test0.png)
