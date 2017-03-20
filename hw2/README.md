@@ -360,4 +360,6 @@ if __name__ == '__main__':
 代码正确地显示了结果。
 ![结果](https://github.com/bacTlink/OS-practice/raw/master/hw2/test0_res.png)
 
-上面的代码并不是线程安全的，这里仅仅作为interface.py中提到的API的一个测试。
+这里仅仅作为interface.py中提到的API的一个测试。
+
+PyMesos与Mesos的HTTP connect好像是一直不断的，（除了对Version的请求），所以HTTP消息应该是按顺序处理的，应该不会发生重入冲突。
