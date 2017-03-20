@@ -153,7 +153,7 @@ Framework所需除以Master所有，即为这个Framework的主导份额。
 DRF算法会解方程，尽量让每一个Framework的主导份额相等，除非某个Framework不需要那么多的资源。如果是带权重的DRF算法，只需将权重归一化再执行DRF算法即可。
 
 它的核心算法伪代码：
-![伪代码](https://github.com/bacTlink/OS-practice/raw/master/hw2/DRF.png
+![伪代码](https://github.com/bacTlink/OS-practice/raw/master/hw2/DRF.png)
 
 它的代码应该是位于mesos-1.1.0/src/master/allocator/mesos/hierarchical.cpp中的HierarchicallAllocatorProcess::allocate()
 
@@ -356,3 +356,8 @@ if __name__ == '__main__':
 
 下图是计算到一半时，资源的使用状况：
 ![资源](https://github.com/bacTlink/OS-practice/raw/master/hw2/test0.png)
+
+代码正确地显示了结果。
+![结果](https://github.com/bacTlink/OS-practice/raw/master/hw2/res.png)
+
+上面的代码并不是线程安全的，这里仅仅作为interface.py中提到的API的一个测试。
