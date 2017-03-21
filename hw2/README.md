@@ -362,7 +362,7 @@ if __name__ == '__main__':
 
 这里仅仅作为interface.py中提到的API的一个测试。
 
-PyMesos与Mesos的HTTP connect好像是一直不断的，（除了对Version的请求），所以HTTP消息应该是按顺序处理的，应该不会发生重入冲突。
+我翻看了PyMesos的底层代码，PyMesos与Mesos的HTTP connect应该是一直不断的，（除了对Version的请求），所以HTTP消息应该是按顺序处理的，应该不会发生重入冲突。
 
 ### 用PyMesos写洋葱法积分的代码
 
