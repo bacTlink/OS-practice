@@ -390,6 +390,7 @@ EXECUTOR_MEM = 32
 
 class MyScheduler(Scheduler):
 
+	#每个Task的任务量是500000个小区间
 	taskN = 500000
 
 	def __init__(self, executor, fun, left, right, division):
@@ -406,6 +407,7 @@ class MyScheduler(Scheduler):
 	def frameworkMessage(self, driver, executorId, slaveId, message):
 		self.sum_res = self.sum_res + float(decode_data(message))
 		self.finished = self.finished + 1
+		#计算完成
 		if self.finished >= self.counts:
 			print(self.sum_res)
 			driver.stop()
@@ -414,6 +416,7 @@ class MyScheduler(Scheduler):
 		filters = {'refuse_seconds': 5}
 
 		for offer in offers:
+			#计算完了就不再用资源了
 			if self.left >= self.right-1e-16:
 				break
 			cpus = self.getResource(offer.resources, 'cpus')
@@ -427,6 +430,7 @@ class MyScheduler(Scheduler):
 			task.agent_id.value = offer.agent_id.value
 			task.name = 'task {}'.format(task_id)
 			task.executor = self.executor
+			#启动任务时，告诉executor要执行的函数、区间、步长
 			task.data = encode_data(self.fun + '!' \
 					+ repr(self.left) + '!' \
 					+ repr(min(self.right, self.left + self.step * self.taskN)) + '!' \
@@ -542,10 +546,13 @@ class MyExecutor(Executor):
 			step = float(tmp[3])
 			res_tot = 0
 			x = left
+						
+			#对提交的函数从left到right进行积分
 			while x<right-1e-16:
 				exec(fun) in globals(), locals()
 				res_tot = res_tot + res
 				x = x + step
+			#发送计算的结果
 			driver.sendFrameworkMessage(encode_data(repr(step * res_tot)))
 
 			update = Dict()
@@ -578,3 +585,4 @@ if __name__ == '__main__':
 ![结果](https://github.com/bacTlink/OS-practice/raw/master/hw2/PI_ln2.png)
 
 积分结果问题不大。
+
