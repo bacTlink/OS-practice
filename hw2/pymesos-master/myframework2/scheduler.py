@@ -45,7 +45,7 @@ class MyScheduler(Scheduler):
 		filters = {'refuse_seconds': 5}
 
 		for offer in offers:
-			if self.left >= self.right:
+			if self.left >= self.right-1e-16:
 				break
 			cpus = self.getResource(offer.resources, 'cpus')
 			mem = self.getResource(offer.resources, 'mem')
