@@ -569,7 +569,7 @@ if __name__ == '__main__':
 	意思是对![f](http://chart.googleapis.com/chart?cht=tx&chl=\Large%204\sqrt{1-x^2})在0~1区间内进行积分，将区间分成1000000份。
 
 - 执行命令：`python scheduler.py 162.105.30.12 "res=1/x" 1 2 1000000`
-	意思是对![f](http://chart.googleapis.com/chart?cht=tx&chl=\Large%20\frac{1}{x})在0~1区间内进行积分，将区间分成1000000份。
+	意思是对![f](http://chart.googleapis.com/chart?cht=tx&chl=\Large%20\frac{1}{x})在1~2区间内进行积分，将区间分成1000000份。
 
 理论结果应该为π和ln2
 
