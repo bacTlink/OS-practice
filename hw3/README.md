@@ -553,7 +553,7 @@ if __name__ == '__main__':
 不填写port_mappings字段就可以成功启动。
 最后还是网络使用了HOST。
 
-找了很久的HTTP API，想知道JSON的格式，最后找到marathon去了。https://mesosphere.github.io/marathon/docs/ports.html
+找了很久的HTTP API，想知道JSON的格式，最后找到marathon去了：https://mesosphere.github.io/marathon/docs/ports.html
 
 ### Mesos
 Mesos地址：http://162.105.174.32:5050/
