@@ -1,5 +1,6 @@
 # 第五次作业
 
+标签（空格分隔）： OS-prac
 
 ---
 
@@ -299,6 +300,10 @@ IPv6 BGP status
 No IPv6 peers found.
 
 ```
+创建calico网络：
+```
+docker network create --driver calico --ipam-driver calico-ipam --subnet=192.168.0.0/16 calico_net
+```
 
 ### 在三台服务器上创建docker ssh镜像
 Dockerfile如下：
@@ -328,15 +333,30 @@ Dockerfile如下：
 ```
 FROM ubuntu-updated
 
-RUN apt-get install -y python-pip
+RUN apt-get update
+RUN apt-get install -y ssh python-pip
 RUN pip install --upgrade pip
 RUN pip install jupyter
 
-CMD ["/usr/local/bin/jupyter", "notebook", "--allow-root", "--ip=0.0.0.0", "--port=8888"]
+RUN useradd -m calico
+RUN echo "calico:calico" | chpasswd
+
+RUN mkdir /var/run/sshd
+
+USER calico
+EXPOSE 22
+WORKDIR /home/calico
+
+CMD ["/usr/local/bin/jupyter", "notebook", "--NotebookApp.token=bactlink", "--ip=0.0.0.0", "--port=8888"]
 ```
 然后创建镜像：
 ```
 $ docker build -t ubuntu-jupyter .
+```
+
+设置反向代理：
+```
+nohup configurable-http-proxy --default-target=http://192.168.0.10:8888 --ip=172.16.6.103 --port=8888 >> /dev/null 2>&1 &
 ```
 
 用pymesos写的framework代码如下：
@@ -356,7 +376,7 @@ from os.path import abspath, join, dirname
 from pymesos import MesosSchedulerDriver, Scheduler, encode_data
 from addict import Dict
 
-TASK_CPU = 0.1
+TASK_CPU = 1
 TASK_MEM = 4
 
 class MinimalScheduler(Scheduler):
@@ -373,15 +393,12 @@ class MinimalScheduler(Scheduler):
 			if cpus < TASK_CPU or mem < TASK_MEM:
 				continue
 
+#Jupyter
 			if self.cnt == 0:
-
+				
 				ip = Dict()
 				ip.key = 'ip'
 				ip.value = '192.168.0.10'
-
-				hostname = Dict()
-				hostname.key = 'hostname'
-				hostname.value = 'homework5'
 
 				NetworkInfo = Dict()
 				NetworkInfo.name = 'calico_net'
@@ -389,7 +406,7 @@ class MinimalScheduler(Scheduler):
 				DockerInfo = Dict()
 				DockerInfo.image = 'ubuntu-jupyter'
 				DockerInfo.network = 'USER'
-				DockerInfo.parameters = [ip, hostname]
+				DockerInfo.parameters = [ip]
 
 				ContainerInfo = Dict()
 				ContainerInfo.type = 'DOCKER'
@@ -398,6 +415,8 @@ class MinimalScheduler(Scheduler):
 				
 				CommandInfo = Dict()
 				CommandInfo.shell = False
+				CommandInfo.value = 'jupyter'
+				CommandInfo.arguments = ['notebook', '--ip=0.0.0.0', '--NotebookApp.token=bactlink', '--port=8888']
 				
 				task = Dict()
 				task_id = 'Jupyter'
@@ -416,14 +435,12 @@ class MinimalScheduler(Scheduler):
 				self.cnt = self.cnt + 1
 				driver.launchTasks(offer.id, [task], filters)
 
-			else if self.cnt < 3:
+			elif self.cnt < 5:
+			
+#sshd	
 				ip = Dict()
 				ip.key = 'ip'
 				ip.value = '192.168.0.1' + str(self.cnt)
-
-				hostname = Dict()
-				hostname.key = 'hostname'
-				hostname.value = 'homework5'
 
 				NetworkInfo = Dict()
 				NetworkInfo.name = 'calico_net'
@@ -431,7 +448,7 @@ class MinimalScheduler(Scheduler):
 				DockerInfo = Dict()
 				DockerInfo.image = 'ubuntu-ssh'
 				DockerInfo.network = 'USER'
-				DockerInfo.parameters = [ip, hostname]
+				DockerInfo.parameters = [ip]
 
 				ContainerInfo = Dict()
 				ContainerInfo.type = 'DOCKER'
@@ -440,12 +457,14 @@ class MinimalScheduler(Scheduler):
 				
 				CommandInfo = Dict()
 				CommandInfo.shell = False
+				CommandInfo.value = '/usr/sbin/sshd'
+				CommandInfo.arguments = ['-D']
 				
 				task = Dict()
 				task_id = 'sshd' + str(self.cnt)
 				task.task_id.value = task_id
 				task.agent_id.value = offer.agent_id.value
-				task.name = 'sshd' + str(self.cnt)
+				task.name = 'Homework5'
 				
 				task.container = ContainerInfo
 				task.command = CommandInfo
@@ -475,7 +494,7 @@ def main(master):
 
 	framework = Dict()
 	framework.user = getpass.getuser()
-	framework.name = "jupyter"
+	framework.name = "Jupyter"
 	framework.hostname = socket.gethostname()
 
 	driver = MesosSchedulerDriver(
@@ -509,5 +528,17 @@ if __name__ == '__main__':
 		sys.exit(1)
 	else:
 		main(sys.argv[1])
-
 ```
+
+Mesos地址为 http://162.105.174.32:5050
+Mesos截图：
+![cluster](https://github.com/bacTlink/OS-practice/raw/master/hw5/cluster.png)
+![cluster](https://github.com/bacTlink/OS-practice/raw/master/hw5/sshds.png)
+Jupyter地址为 http://162.105.174.32:8888
+Jupyter截图：
+![cluster](https://github.com/bacTlink/OS-practice/raw/master/hw5/first_page.png)
+Jupyter的token是bactlink
+可以使用终端：
+![cluster](https://github.com/bacTlink/OS-practice/raw/master/hw5/terminal.png)
+使用终端连接其中一个sshd容器：
+![cluster](https://github.com/bacTlink/OS-practice/raw/master/hw5/ssh.png)
