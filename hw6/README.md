@@ -30,33 +30,42 @@ Raft算法是Paxos的一个替代品。
 场景：Leader Election
 
 - 一开始所有的节点都在等待监听Leader
+
 ![61](https://github.com/bacTlink/OS-practice/raw/master/hw6/61.png)
 
 - 第一个计时结束的节点，C，要求别的节点给它投票
+
 ![61_5](https://github.com/bacTlink/OS-practice/raw/master/hw6/61_5.png)
 
 - 其它节点给C投票
+
 ![61_6](https://github.com/bacTlink/OS-practice/raw/master/hw6/61_6.png)
 
 - C获得了大多数选票，成为leader，定期与其它节点联络
 ![62](https://github.com/bacTlink/OS-practice/raw/master/hw6/62.png)
 
 - 其它节点接收到联络时，刷新自己的计时器，并向C发送心跳信息
+
 ![63](https://github.com/bacTlink/OS-practice/raw/master/hw6/63.png)
 
 - 如果C突然宕机，其它节点会失去联络，定时器不会被重置
+
 ![64](https://github.com/bacTlink/OS-practice/raw/master/hw6/64.png)
 
 - B的定时器先到，成为candidate，要求其它节点为他投票
+
 ![65](https://github.com/bacTlink/OS-practice/raw/master/hw6/65.png)
 
 - B成功成为了leader，并向其它节点发送联络
+
 ![66](https://github.com/bacTlink/OS-practice/raw/master/hw6/66.png)
 
 - 如果同时有多个节点成为candidate，那么可能不会选举出一个leader，因为没有一个节点获得大多数选票
+
 ![67](https://github.com/bacTlink/OS-practice/raw/master/hw6/67.png)
 
 - 直到有一个节点成为leader，心跳联络重新开始
+
 ![68](https://github.com/bacTlink/OS-practice/raw/master/hw6/68.png)
 
 # Mesos容错机制
