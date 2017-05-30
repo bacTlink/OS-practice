@@ -267,7 +267,7 @@ I0529 10:42:57.481673 16858 contender.cpp:268] New candidate (id='14') has enter
 
 [Jupyter](http://162.105.174.32:8888) Token是bactlink
 
-先制作镜像，安装gluster，ssh，jupyter和etcd。
+先制作镜像，安装glusterFS，ssh，jupyter和etcd。
 按照官方教程一步一步来就可以了。
 
 ## ssh免密登录
