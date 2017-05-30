@@ -264,6 +264,7 @@ I0529 10:42:57.481673 16858 contender.cpp:268] New candidate (id='14') has enter
 啊，终于做完了。
 
 [Mesos](http://162.105.174.32:5050/)
+
 [Jupyter](http://162.105.174.32:8888) Token是bactlink
 
 先制作镜像，安装gluster，ssh，jupyter和etcd。
