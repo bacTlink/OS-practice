@@ -690,16 +690,27 @@ if __name__ == '__main__':
 
 ## 运行效果
 废话不说，上图。
+
 下图是：[Mesos](http://162.105.174.32:5050/)的运行画面，看到4个node愉快地跑起来了。
+
 ![mesos](https://github.com/bacTlink/OS-practice/raw/master/hw6/mesos.png)
+
 下图是[Jupyter](http://162.105.174.32:8888)的运行界面，可以看到里面的一些文件什么的。Token是bactlink。
+
 ![jupyter](https://github.com/bacTlink/OS-practice/raw/master/hw6/jupyter.png)
+
 下图输出了/etc/hosts，可以看到所有机子。利用etcd的HTTP API，可以看到node-0确实是etcd的Leader（图中显示了“StateLeader”）。
+
 ![leader](https://github.com/bacTlink/OS-practice/raw/master/hw6/leader.png)
+
 试一试无秘登录。ssh之后，没有弹出选项询问密码，连yes都不需要输入：
+
 ![nokey](https://github.com/bacTlink/OS-practice/raw/master/hw6/ssh-nokey.png)
-证明jupyter notebook确实是在etcd的Leader上运行：
-![local](https://github.com/bacTlink/OS-practice/raw/master/hw6/local.png)
+
+下图证明jupyter notebook确实是在etcd的Leader上运行。可以看到node-0确实是Jupyter Terminal本机的IP，而且从etcd的API来看，node-0确实是etcd集群的leader。
+
+![local](https://github.com/bacTlink/OS-practice/raw/master/hw6/local2.png)
+
 我的代理都是直接代理到etcd的leader，也就是说是通过检测etcd集群的Leader来确定Jupyter的，所以如果成功打开了Jupyter，那就说明Jupyter就在etcd集群的leader处运行。
 
-另外，我也没有实验断掉一个node。一方面是时间原因，另一方面是因为实在是没有必要，因为etcd的leader变得比较频繁。可以通过提供的Jupyter连接到集群上看一看，过不了多久代理就失效，然后不久之后刷新又好了。刷新之后看一看/etc/hosts，发现etcd的Leader变了。在etcd变化的情况下，Jupyter仍然可以在外面登录，也说明我的脚本在一个node挂掉的情况下，是不会有问题的。
+另外，我没有实验断掉一个node。一方面是时间原因，另一方面是因为实在是没有必要，因为etcd的leader变得比较频繁。可以通过提供的Jupyter连接到集群上看一看，过不了多久代理就失效，然后不久之后刷新又好了。刷新之后看一看/etc/hosts，发现etcd的Leader变了。在etcd变化的情况下，Jupyter仍然可以在外面登录，也说明我的脚本在一个node挂掉的情况下，是不会有问题的。
