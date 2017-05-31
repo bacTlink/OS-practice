@@ -713,4 +713,5 @@ if __name__ == '__main__':
 
 我的代理都是直接代理到etcd的leader，也就是说是通过检测etcd集群的Leader来确定Jupyter的，所以如果成功打开了Jupyter，那就说明Jupyter就在etcd集群的leader处运行。
 
-另外，我没有实验断掉一个node。一方面是时间原因，另一方面是因为实在是没有必要，因为etcd的leader变得比较频繁。可以通过提供的Jupyter连接到集群上看一看，过不了多久代理就失效，然后不久之后刷新又好了。刷新之后看一看/etc/hosts，发现etcd的Leader变了。在etcd变化的情况下，Jupyter仍然可以在外面登录，也说明我的脚本在一个node挂掉的情况下，是不会有问题的。
+实验断掉一个node。打开另外一个容器，ssh进一个容器之后，用kill将etcd服务关闭。
+所有节点的hosts表得到更新。
