@@ -713,5 +713,16 @@ if __name__ == '__main__':
 
 我的代理都是直接代理到etcd的leader，也就是说是通过检测etcd集群的Leader来确定Jupyter的，所以如果成功打开了Jupyter，那就说明Jupyter就在etcd集群的leader处运行。
 
-实验断掉一个node。打开另外一个容器，ssh进一个容器之后，用kill将etcd服务关闭。
-所有节点的hosts表得到更新。
+实验断掉一个node。
+```
+$ cat /etc/hosts
+$ ssh node-1
+$ kill -9 6
+$ cat /etc/hosts
+```
+先输出hosts表，然后登录node-1，将运行在node-1的etcd服务关掉。
+即断开node-1的连接。
+回到node-0，即jupyter所在的容器，查看hosts表，看到hosts表已经成功更新了。
+hosts表得到更新。
+
+![downnode](https://github.com/bacTlink/OS-practice/raw/master/hw6/downnode.png)
