@@ -529,7 +529,10 @@ int main(int argc, char *argv[])
 {
 	num = argv[1];
 	run_etcd();
+	//运行ssh服务
 	system("/usr/sbin/sshd");
+	//运行gluster分布式文件系统服务
+	system("glusterd");
 	int last = -2;
 	while (1)
 	{
@@ -695,7 +698,8 @@ if __name__ == '__main__':
 ![leader](https://github.com/bacTlink/OS-practice/raw/master/hw6/leader.png)
 试一试无秘登录。ssh之后，没有弹出选项询问密码，连yes都不需要输入：
 ![nokey](https://github.com/bacTlink/OS-practice/raw/master/hw6/ssh-nokey.png)
+证明jupyter notebook确实是在etcd的Leader上运行：
+![local](https://github.com/bacTlink/OS-practice/raw/master/hw6/local.png)
+我的代理都是直接代理到etcd的leader，也就是说是通过检测etcd集群的Leader来确定Jupyter的，所以如果成功打开了Jupyter，那就说明Jupyter就在etcd集群的leader处运行。
 
-上面的图没办法说明Jupyter是运行在etcd集群的Leader的。不过我的代理都是直接代理到etcd的leader，也就是说是通过检测etcd集群的Leader来确定Jupyter的，所以如果成功打开了Jupyter，那就说明Jupyter就在etcd集群的leader处运行。
-
-另外，我也没有实验断掉一个node。一方面是时间原因，另一方面是因为实在是没有必要，因为etcd的leader变得太频繁了！助教可以通过我提供的Jupyter链接到集群上看一看，过不了多久代理就失效，然后不久之后刷新又好了。刷新之后看一看/etc/hosts，发现etcd的Leader变了！在etcd变化的情况下，Jupyter仍然可以在外面登录，也说明我的脚本在一个node挂掉的情况下，是不会有问题的。
+另外，我也没有实验断掉一个node。一方面是时间原因，另一方面是因为实在是没有必要，因为etcd的leader变得比较频繁。可以通过提供的Jupyter连接到集群上看一看，过不了多久代理就失效，然后不久之后刷新又好了。刷新之后看一看/etc/hosts，发现etcd的Leader变了。在etcd变化的情况下，Jupyter仍然可以在外面登录，也说明我的脚本在一个node挂掉的情况下，是不会有问题的。
