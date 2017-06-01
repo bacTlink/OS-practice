@@ -272,7 +272,7 @@ I0529 10:42:57.481673 16858 contender.cpp:268] New candidate (id='14') has enter
 
 ## ssh免密登录
 ssh免密登录的原理很简单，就是如果B的authorized_keys的列表中，有A的的公钥，那么B就直接可以让A免密登录了。
-由于用的都是用一份镜像，只要生成私钥和公钥之后，将公钥追加到authorized_keys中，之后这个镜像的所有运行实例，都可以免密码互相登录了。
+
 ```
 $ sshkey-gen -t rsa
 $ cat .ssh/id_rsa.pub  >> .ssh/authorized_keys
